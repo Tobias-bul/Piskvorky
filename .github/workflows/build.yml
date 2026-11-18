@@ -1,15 +1,25 @@
-name: Build APK
+name: Build APK + Web
 on:
   push:
   workflow_dispatch:
 permissions:
   contents: write
+  pages: write
+  id-token: write
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.web.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - run: unzip -o "$(ls *.zip | head -1)"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: piskvorky/app/src/main/assets
+      - id: web
+        uses: actions/deploy-pages@v4
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
